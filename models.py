@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
@@ -20,6 +21,10 @@ class FilmCategory(Base):
     category_id = Column(Integer, primary_key=True)
     last_update = Column(String(50))
 
+    film_category = relationship('FilmCategory', cascade='all, delete, delete-orphan')
+    category = relationship('Category', cascade='all, delete, delete-orphan')
+    film = relationship('Film', cascade='all, delete, delete-orphan')
+
     def __repr__(self):
         return f'FilmCategory {self.film_id} {self.category_id}'
 
@@ -39,6 +44,8 @@ class Film(Base):
     special_features = Column(String(50))
     fulltext = Column(String(50))
 
+    film_category = relationship('FilmCategory', cascade='all, delete, delete-orphan')
+
     def __repr__(self):
         return f'Film {self.title}'
 
@@ -49,6 +56,18 @@ class Language(Base):
     name = Column(String(50), nullable=False)
     last_update = Column(String(50))
 
+    film = relationship('Film', cascade='all, delete, delete-orphan')
+    film_category = relationship('FilmCategory', cascade='all, delete, delete-orphan')
+    actor = relationship('Actor', cascade='all, delete, delete-orphan')
+    category = relationship('Category', cascade='all, delete, delete-orphan')
+    film_text = relationship('FilmText', cascade='all, delete, delete-orphan')
+    film_actor = relationship('FilmActor', cascade='all, delete, delete-orphan')
+    country = relationship('Country', cascade='all, delete, delete-orphan')
+    customer = relationship('Customer', cascade='all, delete, delete-orphan')
+    staff = relationship('Staff', cascade='all, delete, delete-orphan')
+    store = relationship('Store', cascade='all, delete, delete-orphan')
+    address = relationship('Address', cascade='all, delete, delete-orphan')
+
     def __repr__(self):
         return f'Language {self.name}'
 
@@ -58,6 +77,10 @@ class FilmActor(Base):
     actor_id = Column(Integer, primary_key=True, autoincrement=True)
     film_id = Column(Integer, primary_key=True)
     last_update = Column(String(50))
+
+    film_actor = relationship('FilmActor', cascade='all, delete, delete-orphan')
+    film = relationship('Film', cascade='all, delete, delete-orphan')
+    actor = relationship('Actor', cascade='all, delete, delete-orphan')
 
     def __repr__(self):
         return f'FilmActor {self.actor_id} {self.film_id}'
@@ -70,6 +93,15 @@ class Actor(Base):
     last_name = Column(String(50), nullable=False)
     last_update = Column(String(50))
 
+    film_actor = relationship('FilmActor', cascade='all, delete, delete-orphan')
+    film = relationship('Film', cascade='all, delete, delete-orphan')
+    film_category = relationship('FilmCategory', cascade='all, delete, delete-orphan')
+    category = relationship('Category', cascade='all, delete, delete-orphan')
+    customer = relationship('Customer', cascade='all, delete, delete-orphan')
+    staff = relationship('Staff', cascade='all, delete, delete-orphan')
+    store = relationship('Store', cascade='all, delete, delete-orphan')
+    address = relationship('Address', cascade='all, delete, delete-orphan')
+
     def __repr__(self):
         return f'Actor {self.first_name} {self.last_name}'
 
@@ -80,6 +112,14 @@ class Inventory(Base):
     film_id = Column(Integer, nullable=False)
     store_id = Column(Integer, nullable=False)
     last_update = Column(String(50))
+
+    film = relationship('Film', cascade='all, delete, delete-orphan')
+    store = relationship('Store', cascade='all, delete, delete-orphan')
+    film_category = relationship('FilmCategory', cascade='all, delete, delete-orphan')
+    category = relationship('Category', cascade='all, delete, delete-orphan')
+    customer = relationship('Customer', cascade='all, delete, delete-orphan')
+    staff = relationship('Staff', cascade='all, delete, delete-orphan')
+    address = relationship('Address', cascade='all, delete, delete-orphan')
 
     def __repr__(self):
         return f'Inventory {self.film_id} {self.store_id}'
@@ -94,6 +134,12 @@ class Rental(Base):
     return_date = Column(String(50))
     staff_id = Column(Integer, nullable=False)
     last_update = Column(String(50))
+
+    rental = relationship('Rental', cascade='all, delete, delete-orphan')
+    inventory = relationship('Inventory', cascade='all, delete, delete-orphan')
+    customer = relationship('Customer', cascade='all, delete, delete-orphan')
+    staff = relationship('Staff', cascade='all, delete, delete-orphan')
+    address = relationship('Address', cascade='all, delete, delete-orphan')
 
     def __repr__(self):
         return f'Rental {self.rental_id} {self.rental_date} {self.inventory_id} {self.customer_id} {self.return_date}'
@@ -112,6 +158,10 @@ class Customer(Base):
     last_update = Column(String(50))
     rental_id = Column(Integer, nullable=False)
 
+    customer = relationship('Customer', cascade='all, delete, delete-orphan')
+    store = relationship('Store', cascade='all, delete, delete-orphan')
+    staff = relationship('Staff', cascade='all, delete, delete-orphan')
+
     def __repr__(self):
         return f'Customer {self.customer_id} {self.store_id} {self.first_name} {self.last_name} {self.email}'
 
@@ -124,6 +174,10 @@ class Payment(Base):
     rental_id = Column(Integer, nullable=False)
     amount = Column(Integer, nullable=False)
     payment_date = Column(String(50), nullable=False)
+
+    customer = relationship('Customer', cascade='all, delete, delete-orphan')
+    staff = relationship('Staff', cascade='all, delete, delete-orphan')
+    rental = relationship('Rental', cascade='all, delete, delete-orphan')
 
     def __repr__(self):
         return f'Payment {self.payment_id} {self.customer_id} {self.staff_id} {self.rental_id} {self.amount} '
@@ -150,6 +204,16 @@ class Store(Base):
     address_id = Column(Integer, nullable=False)
     last_update = Column(String(50))
 
+    manager_staff = relationship('Staff', cascade='all, delete, delete-orphan')
+    address = relationship('Address', cascade='all, delete, delete-orphan')
+    rental = relationship('Rental', cascade='all, delete, delete-orphan')
+    customer = relationship('Customer', cascade='all, delete, delete-orphan')
+    staff = relationship('Staff', cascade='all, delete, delete-orphan')
+    film = relationship('Film', cascade='all, delete, delete-orphan')
+    film_category = relationship('FilmCategory', cascade='all, delete, delete-orphan')
+    film_actor = relationship('FilmActor', cascade='all, delete, delete-orphan')
+    category = relationship('Category', cascade='all, delete, delete-orphan')
+
     def __repr__(self):
         return f'Store {self.store_id} {self.manager_staff_id} {self.address_id}'
 
@@ -167,6 +231,15 @@ class Staff(Base):
     last_update = Column(String(50))
     picture = Column(String(50))
 
+    staff = relationship('Staff', cascade='all, delete, delete-orphan')
+    address = relationship('Address', cascade='all, delete, delete-orphan')
+    store = relationship('Store', cascade='all, delete, delete-orphan')
+    rental = relationship('Rental', cascade='all, delete, delete-orphan')
+    customer = relationship('Customer', cascade='all, delete, delete-orphan')
+    film = relationship('Film', cascade='all, delete, delete-orphan')
+    film_category = relationship('FilmCategory', cascade='all, delete, delete-orphan')
+    film_actor = relationship('FilmActor', cascade='all, delete, delete-orphan')
+
     def __repr__(self):
         return f'Staff {self.staff_id} {self.first_name} {self.last_name} {self.active} {self.username}'
 
@@ -178,6 +251,12 @@ class City(Base):
     country_id = Column(Integer, nullable=False)
     last_update = Column(String(50))
 
+    country = relationship('Country', cascade='all, delete, delete-orphan')
+    store = relationship('Store', cascade='all, delete, delete-orphan')
+    rental = relationship('Rental', cascade='all, delete, delete-orphan')
+    customer = relationship('Customer', cascade='all, delete, delete-orphan')
+    film = relationship('Film', cascade='all, delete, delete-orphan')
+
     def __repr__(self):
         return f'City {self.city_id} {self.city} {self.country_id} {self.last_update}'
 
@@ -187,6 +266,8 @@ class Country(Base):
     country_id = Column(Integer, primary_key=True, autoincrement=True)
     country = Column(String(50), nullable=False)
     last_update = Column(String(50))
+
+    store = relationship('Store', cascade='all, delete, delete-orphan')
 
     def __repr__(self):
         return f'Country {self.country_id} {self.country} {self.last_update}'
